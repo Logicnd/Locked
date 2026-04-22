@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LOCKED</title>
+  <link rel="stylesheet" href="./style.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <div class="wrapper">
+
+    <!-- Secret Content -->
+    <div id="content" class="hidden">
+      <div class="secret-container">
+        <h2 class="glitch-text" data-text="ACCESS GRANTED">ACCESS GRANTED</h2>
+        <div class="terminal">
+          <p class="terminal-line">> Welcome to the inner circle.</p>
+          <p class="terminal-line">> You've proven you can reverse patterns.</p>
+          <p class="terminal-line">> The real puzzles are just beginning...</p>
+          <p class="terminal-line blink">> _</p>
+        </div>
+        <button id="nextChallengeBtn" class="challenge-btn">NEXT CHALLENGE</button>
+        <button id="logoutBtn" class="logout-btn secondary">DISCONNECT</button>
+      </div>
+    </div>
+
+    <!-- Puzzle 2: Hex Challenge -->
+    <div id="puzzle2" class="hidden">
+      <div class="puzzle2-container">
+        <h2 class="glitch-text" data-text="PHASE 2">PHASE 2</h2>
+        <div class="terminal">
+          <p class="terminal-line">> The System speaks in hexadecimal.</p>
+          <p class="terminal-line">> Convert hex to ASCII to proceed.</p>
+          <p class="terminal-line">> Example: 41 42 43 = ABC</p>
+        </div>
+        <div class="hex-display" id="hexDisplay"></div>
+        <div class="field puzzle-field">
+          <input id="puzzle2Input" type="text" autocomplete="off" placeholder=" " />
+          <label for="puzzle2Input">DECODED MESSAGE</label>
+          <div class="input-line"></div>
+        </div>
+        <div id="puzzle2Message" class="message typewriter"></div>
+        <button id="submitPuzzle2Btn" class="challenge-btn">VERIFY</button>
+        <button id="skipToLeaderboardBtn" class="logout-btn secondary">VIEW LEADERBOARD</button>
+      </div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div id="leaderboard" class="hidden">
+      <div class="leaderboard-container">
+        <h2 class="glitch-text" data-text="ELITE">ELITE</h2>
+        <div class="subtitle">// CHALLENGE COMPLETERS //</div>
+        <div class="terminal leaderboard-terminal" id="leaderboardDisplay">
+          <p class="terminal-line">> Loading leaderboard...</p>
+        </div>
+        <button id="backBtn" class="logout-btn">RETURN</button>
+      </div>
+    </div>
+
+    <!-- Login -->
+    <div id="loginBox" class="login-box">
+      <div class="title-container">
+        <h1 class="title glitch" data-text="LOCKED">LOCKED</h1>
+        <div class="subtitle">// SYSTEM RESTRICTED //</div>
+      </div>
+
+      <div class="field">
+        <input id="username" type="text" autocomplete="off" placeholder=" " />
+        <label for="username">IDENTITY</label>
+        <div class="input-line"></div>
+      </div>
+
+      <div class="field">
+        <input id="password" type="password" autocomplete="off" placeholder=" " />
+        <button type="button" id="togglePwd" class="toggle">👁</button>
+        <label for="password">KEY</label>
+        <div class="input-line"></div>
+      </div>
+
+      <div id="message" class="message typewriter"></div>
+
+      <div class="attempt-counter" id="attemptCounter"></div>
+    </div>
+
+  </div>
+
+  <!-- Background effects -->
+  <div class="noise"></div>
+  <div class="scanlines"></div>
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UNLOCKED // PHASE 1</title>
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/css/unlocked.css" />
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="scanlines"></div>
+
+  <main class="stage">
+    <div class="unlock-container">
+      <div class="unlock-icon pulse">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <rect x="5" y="11" width="14" height="10" rx="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          <circle cx="12" cy="16" r="1" fill="currentColor" />
+        </svg>
+      </div>
+
+      <h1 class="title success" data-text="ACCESS GRANTED">ACCESS GRANTED</h1>
+      <p class="subtitle identity" id="identityDisplay">Welcome, unknown</p>
+
+      <div class="terminal-box">
+        <div class="terminal-header">
+          <span class="terminal-dot red"></span>
+          <span class="terminal-dot yellow"></span>
+          <span class="terminal-dot green"></span>
+          <span class="terminal-title">SYSTEM LOG</span>
+        </div>
+        <div class="terminal-body">
+          <p class="log-line"><span class="timestamp">[00:00]</span> Authentication successful</p>
+          <p class="log-line"><span class="timestamp">[00:01]</span> Security clearance: LEVEL 1</p>
+          <p class="log-line"><span class="timestamp">[00:02]</span> Puzzle 1 completed</p>
+          <p class="log-line pulse"><span class="timestamp">[00:03]</span> <span id="nextUnlock">Phase 2 awaiting...</span></p>
+        </div>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 33%"></div>
+        <span class="progress-text">33% SYSTEM UNLOCKED</span>
+      </div>
+
+      <div class="action-grid">
+        <a href="/pages/puzzle2.html" class="action-btn primary">
+          <span class="btn-icon">▶</span>
+          <span class="btn-label">CONTINUE</span>
+          <span class="btn-sub">Phase 2 Challenge</span>
+        </a>
+        
+        <a href="/pages/leaderboard.html" class="action-btn">
+          <span class="btn-icon">🏆</span>
+          <span class="btn-label">LEADERBOARD</span>
+          <span class="btn-sub">View Rankings</span>
+        </a>
+      </div>
+
+      <button id="logoutBtn" class="logout-link">DISCONNECT</button>
+    </div>
+  </main>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/unlocked.js"></script>
+</body>
+</html>

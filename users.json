@@ -1,0 +1,19 @@
+{
+  "bob": {
+    "id": "25233947-4223-4d18-99e0-b168e172e0f1",
+    "username": "bob",
+    "password_hash": "3c22809a63e379cba9d681bf3213bc5574705a047122319388377abf88c42164",
+    "attempts": 0,
+    "created_at": 1776889201588,
+    "puzzle2_attempts": 2,
+    "puzzle2_solved": true,
+    "puzzle2_solved_at": 1776889465161
+  },
+  "kiri is just better": {
+    "id": "3b655774-d31c-40ea-a3fc-59831991be96",
+    "username": "kiri is just better",
+    "password_hash": "3aa877a7e885790e0b63a2425084b98e513aa00dd707794652c666708e0847f5",
+    "attempts": 0,
+    "created_at": 1776894257021
+  }
+}
