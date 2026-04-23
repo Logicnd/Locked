@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const passwordInput = document.getElementById('password');
   const toggleBtn = document.getElementById('togglePwd');
   const message = document.getElementById('message');
-  const attemptCounter = document.getElementById('attemptCounter');
   const loginBox = document.getElementById('loginBox');
   const content = document.getElementById('content');
   const logoutBtn = document.getElementById('logoutBtn');
@@ -23,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const backBtn = document.getElementById('backBtn');
 
   let typewriterTimeout;
-  let attemptCount = 0;
   let currentUser = null;
 
   // Check if already logged in
@@ -113,8 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
         message.classList.remove('error');
         showContent(data.user);
       } else {
-        attemptCount = data.attemptCount || attemptCount + 1;
-        updateAttemptCounter();
 
         if (data.hint) {
           typewriter(data.hint, message, 35);
@@ -131,12 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function updateAttemptCounter() {
-    if (attemptCount > 0) {
-      attemptCounter.textContent = `ATTEMPT ${attemptCount}`;
-      attemptCounter.classList.add('show');
-    }
-  }
 
   function showContent(user) {
     currentUser = user;

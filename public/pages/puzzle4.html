@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PHASE 2 // HEX DECODER</title>
+  <title>PHASE 4 // BASE64 DECODER</title>
   <link rel="stylesheet" href="/css/main.css" />
-  <link rel="stylesheet" href="/css/puzzle2.css" />
+  <link rel="stylesheet" href="/css/puzzle4.css" />
 </head>
 <body>
   <div class="noise"></div>
@@ -13,49 +13,38 @@
 
   <main class="stage">
     <div class="puzzle-container">
-      <div class="phase-badge">PHASE 2</div>
-      
-      <h1 class="title" data-text="HEX DECODER">HEX DECODER</h1>
-      <p class="subtitle">The System speaks in code</p>
-
+      <div class="phase-badge">PHASE 4</div>
+      <h1 class="title" data-text="BASE64 DECODER">BASE64 DECODER</h1>
+      <p class="subtitle">The System speaks in base64</p>
       <div class="instruction-card">
         <h3 class="card-title">📡 INCOMING TRANSMISSION</h3>
-        <p class="card-text">Convert hexadecimal values to ASCII characters.</p>
-        <p class="card-example">Example: <code>41 42 43</code> = <code>ABC</code></p>
+        <p class="card-text">Convert base64 values to ASCII characters.</p>
+        <p class="card-example">Example: <code>QUJD</code> = <code>ABC</code></p>
       </div>
-
-      <div class="hex-display-box">
-        <div class="hex-label">TRANSMISSION DATA</div>
-        <div id="hexData" class="hex-data">Loading...</div>
-        <div class="hex-glow"></div>
+      <div class="base64-display-box">
+        <div class="base64-label">TRANSMISSION DATA</div>
+        <div id="base64Data" class="base64-data">Loading...</div>
+        <div class="base64-glow"></div>
       </div>
-
-      <form id="puzzleForm" class="puzzle-form">
+      <form id="puzzle4Form" class="puzzle-form">
         <div class="input-group">
           <input id="answer" type="text" autocomplete="off" placeholder="" required />
           <label for="answer">DECODED MESSAGE</label>
           <span class="input-border"></span>
         </div>
-
         <div id="feedback" class="feedback"></div>
-
         <button type="submit" class="submit-btn">
           <span class="btn-text">TRANSMIT</span>
         </button>
       </form>
-
       <div class="hint-system">
         <button id="hintBtn" class="hint-btn">💡 REQUEST HINT</button>
         <div id="hintDisplay" class="hint-display"></div>
       </div>
-
-
-      <a href="/pages/puzzle3.html" class="skip-link">Proceed to Phase 3 →</a>
       <a href="/pages/leaderboard.html" class="skip-link">Skip to Leaderboard →</a>
     </div>
   </main>
-
   <script src="/js/auth.js"></script>
-  <script src="/js/puzzle2.js"></script>
+  <script src="/js/puzzle4.js"></script>
 </body>
 </html>

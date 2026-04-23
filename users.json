@@ -3,9 +3,7 @@
     "id": "25233947-4223-4d18-99e0-b168e172e0f1",
     "username": "bob",
     "password_hash": "3c22809a63e379cba9d681bf3213bc5574705a047122319388377abf88c42164",
-    "attempts": 0,
     "created_at": 1776889201588,
-    "puzzle2_attempts": 2,
     "puzzle2_solved": true,
     "puzzle2_solved_at": 1776889465161
   },
@@ -15,5 +13,17 @@
     "password_hash": "3aa877a7e885790e0b63a2425084b98e513aa00dd707794652c666708e0847f5",
     "attempts": 0,
     "created_at": 1776894257021
+  },
+  "kiri": {
+    "id": "b04df345-87e8-4c26-8b27-bb49dbc14019",
+    "username": "kiri",
+    "password_hash": "237646540d50a3dd4a37b43a6c7bf2881030895c8c3d53bf9439838b1a2c7c03",
+    "created_at": 1776934135485
+  },
+  "marshall": {
+    "id": "3347bbb6-a1e4-4d9f-8ef2-43833180c116",
+    "username": "marshall",
+    "password_hash": "7bf4fb77546327692eb9c969def49c124ff5443a48547bcf9d8a93aefa0d39cb",
+    "created_at": 1776935798465
   }
 }

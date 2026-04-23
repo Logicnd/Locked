@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Always start with light theme
+
   // Redirect if already logged in
   Auth.requireGuest();
 
@@ -7,14 +9,27 @@ document.addEventListener('DOMContentLoaded', () => {
   const password = document.getElementById('password');
   const toggleBtn = document.getElementById('togglePwd');
   const feedback = document.getElementById('feedback');
-  const attemptTracker = document.getElementById('attemptTracker');
 
-  let attempts = 0;
 
   // Toggle password visibility
   toggleBtn.addEventListener('click', () => {
     const isHidden = password.type === 'password';
     password.type = isHidden ? 'text' : 'password';
+  });
+
+  // Add focus/input listeners for input-mode
+  [username, password].forEach(input => {
+    input.addEventListener('focus', () => {
+      input.classList.add('input-active');
+    });
+    input.addEventListener('input', () => {
+      input.classList.add('input-active');
+    });
+    input.addEventListener('blur', () => {
+      if (!input.value) {
+        input.classList.remove('input-active');
+      }
+    });
   });
 
   // Form submission
@@ -43,17 +58,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Success - redirect to unlocked
         feedback.className = 'feedback success';
         Typewriter.write('Access granted. Redirecting...', feedback, 30);
-        
         setTimeout(() => {
           window.location.href = '/pages/unlocked.html';
         }, 800);
       } else {
         // Failed
-        attempts = data.attemptCount || attempts + 1;
-        updateAttempts();
-        
         feedback.className = 'feedback error';
-        
         if (data.hint) {
           Typewriter.write(data.hint, feedback, 30);
         } else if (data.taunt) {
@@ -70,10 +80,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  function updateAttempts() {
-    if (attempts > 0) {
-      attemptTracker.textContent = `ATTEMPT ${attempts}`;
-      attemptTracker.classList.add('show');
-    }
-  }
 });

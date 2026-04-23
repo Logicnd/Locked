@@ -1,5 +1,18 @@
+
+.login-form input.input-active {
+  border: 2px solid var(--accent) !important;
+  box-shadow: 0 0 8px 2px var(--accent-glow);
+  background: var(--bg-input);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
 .lock-container {
   text-align: center;
+  background: var(--bg-card);
+  border-radius: 18px;
+  box-shadow: 0 4px 32px 0 #000a;
+  padding: 32px 24px 24px 24px;
 }
 
 .lock-icon {
@@ -35,18 +48,13 @@
   margin-bottom: 32px;
 }
 
-.attempts {
-  font-size: 10px;
-  color: var(--text-muted);
-  letter-spacing: 2px;
-  margin-top: 12px;
-  opacity: 0;
-  transition: opacity 0.3s;
+body {
+  background: var(--bg) !important;
+  color: var(--text) !important;
 }
 
-.attempts.show {
-  opacity: 1;
-}
+
+/* Remove attempts styling, not used */
 
 .hint-zone {
   border-top: 1px solid var(--border);

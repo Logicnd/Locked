@@ -1,0 +1,31 @@
+/* Phase 4 Base64 Decoder Styles */
+.base64-display-box {
+  background: #181c1f;
+  border: 1px solid #ff00c8;
+  border-radius: 8px;
+  margin: 24px 0 16px 0;
+  padding: 24px 16px;
+  text-align: center;
+  position: relative;
+}
+.base64-label {
+  color: #ff00c8;
+  font-family: monospace;
+  font-size: 0.9em;
+  margin-bottom: 8px;
+}
+.base64-data {
+  color: #ff00c8;
+  font-family: monospace;
+  font-size: 1.3em;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.base64-glow {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  box-shadow: 0 0 24px 2px #ff00c8;
+  opacity: 0.1;
+  pointer-events: none;
+  border-radius: 8px;
+}

@@ -1,0 +1,31 @@
+/* Phase 3 Binary Decoder Styles */
+.binary-display-box {
+  background: #181c1f;
+  border: 1px solid #00fff7;
+  border-radius: 8px;
+  margin: 24px 0 16px 0;
+  padding: 24px 16px;
+  text-align: center;
+  position: relative;
+}
+.binary-label {
+  color: #00fff7;
+  font-family: monospace;
+  font-size: 0.9em;
+  margin-bottom: 8px;
+}
+.binary-data {
+  color: #00fff7;
+  font-family: monospace;
+  font-size: 1.3em;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.binary-glow {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  box-shadow: 0 0 24px 2px #00fff7;
+  opacity: 0.1;
+  pointer-events: none;
+  border-radius: 8px;
+}

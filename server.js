@@ -1,3 +1,8 @@
+
+
+
+
+
 const express = require('express');
 const crypto = require('crypto');
 const fs = require('fs').promises;
@@ -39,36 +44,6 @@ function generatePuzzlePassword(username) {
 }
 
 // Get messages
-function getTaunt(username, attemptCount) {
-  const taunts = [
-    `So close, ${username}... yet so far.`,
-    `${username}, you're making this harder than it needs to be.`,
-    `Persistence is key, ${username}.`,
-    `${username}, the answer is staring at you.`,
-    "Maybe look at your name differently?",
-    `The system recognizes you, ${username}. But do you recognize it?`,
-    `${username}, reverse your thinking.`,
-    `Patterns, ${username}. Look for patterns.`,
-    `Each failure teaches, ${username}.`,
-    `${username}, think backwards.`
-  ];
-  return taunts[Math.floor(Math.random() * taunts.length)];
-}
-
-function getHint(username, attemptCount) {
-  const reversed = username.toLowerCase().split('').reverse().join('');
-  const hints = [
-    "There's something backwards about this...",
-    "Try reading it in reverse.",
-    `The last letter is '${username.slice(-1)}'`,
-    `The first letter should be '${username.slice(-1)}'`,
-    "Think mirror...",
-    `It starts with '${reversed[0]}' and ends with '${reversed.slice(-1)}'`,
-    "What if you spelled your name backwards?",
-    "The key is the mirror of your identity."
-  ];
-  return hints[Math.min(attemptCount - 1, hints.length - 1)];
-}
 
 // Middleware
 app.use(express.json());
@@ -113,7 +88,6 @@ app.post('/api/login', async (req, res) => {
         id,
         username: lowerUsername,
         password_hash: hash,
-        attempts: 0,
         created_at: Date.now()
       });
       
@@ -130,9 +104,7 @@ app.post('/api/login', async (req, res) => {
     // Wrong answer
     return res.status(403).json({
       error: 'Access denied',
-      taunt: getTaunt(lowerUsername, 1),
-      hint: null,
-      attemptCount: 1
+      
     });
   }
   
@@ -140,32 +112,12 @@ app.post('/api/login', async (req, res) => {
   const inputHash = hashPassword(password);
   
   if (inputHash !== user.password_hash) {
-    user.attempts = (user.attempts || 0) + 1;
-    await saveUsers();
-    
-    let response = {
-      error: 'Access denied',
-      attemptCount: user.attempts
-    };
-    
-    if (user.attempts === 1) {
-      response.message = "Hm, that wasn't it...";
-    } else if (user.attempts === 2) {
-      response.message = "The key has a connection to your identity...";
-    } else if (user.attempts % 3 === 0) {
-      response.hint = getHint(lowerUsername, user.attempts);
-    } else {
-      response.taunt = getTaunt(lowerUsername, user.attempts);
-    }
-    
-    return res.status(403).json(response);
+    return res.status(403).json({ error: 'Access denied' });
   }
   
   // Success
-  user.attempts = 0;
   await saveUsers();
   req.session.userId = user.id;
-  
   res.json({ 
     success: true, 
     message: 'Access granted.',
@@ -195,7 +147,6 @@ app.post('/api/reset', async (req, res) => {
   const { username } = req.body;
   const user = users.get(username.toLowerCase());
   if (user) {
-    user.attempts = 0;
     await saveUsers();
   }
   res.json({ success: true });
@@ -260,8 +211,7 @@ app.post('/api/puzzle2/verify', async (req, res) => {
   }
   
   res.status(403).json({
-    error: 'Incorrect. Study the hex carefully.',
-    attempts: (user.puzzle2_attempts = (user.puzzle2_attempts || 0) + 1)
+    error: 'Incorrect. Study the hex carefully.'
   });
 });
 
@@ -283,21 +233,6 @@ app.get('/api/leaderboard', (req, res) => {
 });
 
 // Check puzzle 2 status
-app.get('/api/puzzle2/status', (req, res) => {
-  if (!req.session.userId) {
-    return res.status(401).json({ error: 'Access denied' });
-  }
-  
-  const user = Array.from(users.values()).find(u => u.id === req.session.userId);
-  if (!user) {
-    return res.status(401).json({ error: 'Identity not found' });
-  }
-  
-  res.json({
-    solved: !!user.puzzle2_solved,
-    attempts: user.puzzle2_attempts || 0
-  });
-});
 
 // Initialize and start
 loadUsers().then(() => {
