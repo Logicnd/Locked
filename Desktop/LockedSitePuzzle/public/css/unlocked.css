@@ -1,0 +1,168 @@
+.unlock-container {
+  text-align: center;
+}
+
+.unlock-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
+  color: var(--accent);
+}
+
+.unlock-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.title.success {
+  color: var(--accent);
+  font-size: 28px;
+  letter-spacing: 8px;
+}
+
+.identity {
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 32px;
+}
+
+.identity::before {
+  content: '> ';
+  color: var(--accent);
+}
+
+/* Terminal */
+.terminal-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.terminal-header {
+  background: var(--bg-input);
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.terminal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.terminal-dot.red { background: var(--error); }
+.terminal-dot.yellow { background: #f0c040; }
+.terminal-dot.green { background: var(--accent); }
+
+.terminal-title {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+}
+
+.terminal-body {
+  padding: 16px;
+}
+
+.log-line {
+  font-size: 12px;
+  margin: 8px 0;
+  color: var(--text-muted);
+}
+
+.timestamp {
+  color: var(--accent);
+  margin-right: 8px;
+}
+
+/* Progress Bar */
+.progress-bar {
+  position: relative;
+  height: 30px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  margin-bottom: 32px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-glow));
+  transition: width 0.5s ease;
+}
+
+.progress-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text);
+}
+
+/* Action Grid */
+.action-grid {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.action-btn:hover {
+  border-color: var(--accent);
+  background: rgba(78, 205, 196, 0.05);
+}
+
+.action-btn.primary {
+  border-color: var(--accent);
+  background: rgba(78, 205, 196, 0.1);
+}
+
+.btn-icon {
+  font-size: 20px;
+}
+
+.btn-label {
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.btn-sub {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.logout-link {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.logout-link:hover {
+  color: var(--error);
+}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LOCKED // PHASE 0</title>
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/css/login.css" />
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="scanlines"></div>
+
+  <main class="stage">
+    <div class="lock-container">
+      <div class="lock-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <rect x="5" y="11" width="14" height="10" rx="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+      </div>
+      
+      <h1 class="title glitch" data-text="LOCKED">LOCKED</h1>
+      <p class="subtitle">RESTRICTED SYSTEM ACCESS</p>
+
+      <form id="loginForm" class="login-form">
+        <div class="input-group">
+          <input id="username" type="text" autocomplete="off" placeholder="" required />
+          <label for="username">IDENTITY</label>
+          <span class="input-border"></span>
+        </div>
+
+        <div class="input-group">
+          <input id="password" type="password" autocomplete="off" placeholder="" required />
+          <button type="button" id="togglePwd" class="toggle-btn" tabindex="-1">👁</button>
+          <label for="password">KEY</label>
+          <span class="input-border"></span>
+        </div>
+
+        <div id="feedback" class="feedback"></div>
+        <div id="attemptTracker" class="attempts"></div>
+
+        <button type="submit" class="submit-btn">
+          <span class="btn-text">AUTHENTICATE</span>
+          <span class="btn-glitch"></span>
+        </button>
+      </form>
+
+      <div class="hint-zone">
+        <p class="hint-text">The system recognizes patterns...</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/login.js"></script>
+</body>
+</html>

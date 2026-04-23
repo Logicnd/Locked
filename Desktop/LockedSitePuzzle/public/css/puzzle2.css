@@ -1,0 +1,143 @@
+.puzzle-container {
+  text-align: center;
+}
+
+.phase-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-size: 10px;
+  letter-spacing: 3px;
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 300;
+  letter-spacing: 8px;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.instruction-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 20px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.card-title {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.card-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.card-example {
+  font-size: 12px;
+  color: var(--text);
+}
+
+.card-example code {
+  background: var(--bg-input);
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+}
+
+/* Hex Display */
+.hex-display-box {
+  position: relative;
+  background: var(--bg-input);
+  border: 2px solid var(--border);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.hex-label {
+  position: absolute;
+  top: -10px;
+  left: 16px;
+  background: var(--bg);
+  padding: 0 8px;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--accent);
+}
+
+.hex-data {
+  font-size: 18px;
+  letter-spacing: 4px;
+  color: var(--accent);
+  word-break: break-all;
+  line-height: 1.8;
+  font-family: var(--font-mono);
+  animation: hexGlow 2s ease-in-out infinite;
+}
+
+@keyframes hexGlow {
+  0%, 100% { text-shadow: 0 0 5px var(--accent-glow); }
+  50% { text-shadow: 0 0 20px var(--accent-glow); }
+}
+
+/* Hint System */
+.hint-system {
+  margin-top: 24px;
+}
+
+.hint-btn {
+  background: transparent;
+  border: 1px dashed var(--border);
+  color: var(--text-muted);
+  padding: 8px 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.hint-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.hint-display {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--accent);
+  font-style: italic;
+  min-height: 20px;
+}
+
+/* Attempt Counter */
+.attempt-counter {
+  margin-top: 20px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.attempt-counter span {
+  color: var(--accent);
+  font-weight: bold;
+}
+
+.skip-link {
+  display: inline-block;
+  margin-top: 24px;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.skip-link:hover {
+  color: var(--accent);
+}

@@ -1,0 +1,446 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #0d0d0d;
+  font-family: 'Courier New', monospace;
+  color: #e0e0e0;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Background noise */
+.noise {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  z-index: -1;
+}
+
+/* Scanlines */
+.scanlines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0.1) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  z-index: -1;
+}
+
+.wrapper {
+  width: 380px;
+  text-align: center;
+  margin: auto;
+  padding: 60px 30px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Title with glitch effect */
+.title-container {
+  margin-bottom: 40px;
+}
+
+.title {
+  font-size: 42px;
+  font-weight: 300;
+  letter-spacing: 16px;
+  text-transform: uppercase;
+  color: #666;
+  margin: 0;
+  position: relative;
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.subtitle {
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: #444;
+  margin-top: 8px;
+  opacity: 0.7;
+}
+
+.glitch {
+  position: relative;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch::before {
+  animation: glitch-1 3s infinite linear alternate-reverse;
+  color: #ff6b6b;
+  clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+  transform: translate(-2px, -1px);
+}
+
+.glitch::after {
+  animation: glitch-2 2s infinite linear alternate-reverse;
+  color: #4ecdc4;
+  clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+  transform: translate(2px, 1px);
+}
+
+@keyframes glitch-1 {
+  0%, 90%, 100% { transform: translate(-2px, -1px); opacity: 0; }
+  92% { transform: translate(1px, 1px); opacity: 0.8; }
+  94% { transform: translate(-1px, -1px); opacity: 0.8; }
+  96% { transform: translate(2px, 0); opacity: 0.8; }
+}
+
+@keyframes glitch-2 {
+  0%, 90%, 100% { transform: translate(2px, 1px); opacity: 0; }
+  91% { transform: translate(-2px, -1px); opacity: 0.8; }
+  93% { transform: translate(1px, 1px); opacity: 0.8; }
+  95% { transform: translate(-1px, 0); opacity: 0.8; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 0.5; }
+}
+
+/* Input field container */
+.field {
+  position: relative;
+  margin-bottom: 28px;
+}
+
+/* Animated input line */
+.input-line {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #666, transparent);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+input {
+  width: 100%;
+  padding: 16px 44px 16px 16px;
+  border: 1px solid #333;
+  border-radius: 0;
+  outline: none;
+  font-size: 14px;
+  background: #1a1a1a;
+  color: #e0e0e0;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+input:focus {
+  border-color: #555;
+  background: #1f1f1f;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.03);
+}
+
+input:focus ~ .input-line {
+  width: 100%;
+}
+
+#puzzle2:not(.hidden),
+#leaderboard:not(.hidden) {
+  display: block;
+  animation: fadeIn 0.6s ease;
+}
+
+/* Label */
+label {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: #555;
+  pointer-events: none;
+  transition: all 0.25s ease;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+input:focus + label,
+input:not(:placeholder-shown) + label,
+input:focus + .toggle + label,
+input:not(:placeholder-shown) + .toggle + label {
+  top: -20px;
+  font-size: 10px;
+  color: #777;
+}
+
+/* Toggle button */
+.toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #444;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+  padding: 8px;
+  filter: grayscale(100%);
+}
+
+.toggle:hover {
+  opacity: 1;
+  color: #888;
+}
+
+/* Message area */
+.message {
+  font-size: 13px;
+  color: #666;
+  min-height: 40px;
+  margin-top: 20px;
+  text-align: center;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* Typewriter cursor */
+.typewriter {
+  font-family: 'Courier New', monospace;
+}
+
+.typewriter::after {
+  content: '▋';
+  animation: blink 1s infinite;
+  color: #ff6b6b;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Error state */
+.message.error {
+  color: #ff6b6b;
+  text-shadow: 0 0 10px rgba(255, 107, 107, 0.4);
+}
+
+/* Attempt counter */
+.attempt-counter {
+  font-size: 10px;
+  color: #333;
+  margin-top: 16px;
+  letter-spacing: 2px;
+}
+
+.attempt-counter.show {
+  color: #555;
+}
+
+/* Hidden content */
+.hidden {
+  display: none;
+}
+
+/* Secret container */
+.secret-container {
+  animation: fadeIn 0.8s ease;
+}
+
+/* Puzzle 2 container */
+.puzzle2-container {
+  animation: fadeIn 0.8s ease;
+}
+
+.hex-display {
+  background: #0a0a0a;
+  border: 1px solid #333;
+  padding: 20px;
+  margin: 24px 0;
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  letter-spacing: 3px;
+  color: #4ecdc4;
+  word-break: break-all;
+  line-height: 1.6;
+  animation: hexPulse 2s ease-in-out infinite;
+}
+
+@keyframes hexPulse {
+  0%, 100% { border-color: #333; }
+  50% { border-color: #4ecdc4; }
+}
+
+.puzzle-field {
+  margin-top: 24px;
+}
+
+/* Leaderboard */
+.leaderboard-container {
+  animation: fadeIn 0.8s ease;
+}
+
+.leaderboard-terminal {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.leaderboard-entry {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #222;
+}
+
+.leaderboard-entry:first-child {
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.leaderboard-entry:nth-child(2) {
+  color: #c0c0c0;
+}
+
+.leaderboard-entry:nth-child(3) {
+  color: #cd7f32;
+}
+
+.rank {
+  color: #4ecdc4;
+  min-width: 30px;
+}
+
+.username {
+  flex: 1;
+  text-align: left;
+  margin-left: 16px;
+}
+
+.time {
+  color: #666;
+  font-size: 11px;
+}
+
+.glitch-text {
+  font-size: 24px;
+  color: #4ecdc4;
+  letter-spacing: 8px;
+  position: relative;
+  animation: glitch-text 3s infinite;
+}
+
+@keyframes glitch-text {
+  0%, 90%, 100% { transform: none; filter: none; }
+  92% { transform: skewX(5deg); filter: hue-rotate(90deg); }
+  94% { transform: skewX(-5deg); filter: hue-rotate(-90deg); }
+}
+
+.terminal {
+  background: #0a0a0a;
+  border: 1px solid #222;
+  padding: 24px;
+  margin: 32px 0;
+  text-align: left;
+}
+
+.terminal-line {
+  margin: 8px 0;
+  color: #888;
+  font-size: 13px;
+}
+
+.terminal-line.blink {
+  animation: terminal-blink 1s infinite;
+}
+
+@keyframes terminal-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.logout-btn {
+  background: transparent;
+  border: 1px solid #444;
+  color: #666;
+  padding: 12px 32px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.logout-btn:hover {
+  border-color: #ff6b6b;
+  color: #ff6b6b;
+  box-shadow: 0 0 15px rgba(255, 107, 107, 0.2);
+}
+
+.logout-btn.secondary {
+  border-color: #333;
+  color: #555;
+  margin-top: 12px;
+}
+
+.logout-btn.secondary:hover {
+  border-color: #666;
+  color: #888;
+}
+
+/* Challenge button */
+.challenge-btn {
+  background: transparent;
+  border: 1px solid #4ecdc4;
+  color: #4ecdc4;
+  padding: 14px 36px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  letter-spacing: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  margin-top: 24px;
+}
+
+.challenge-btn:hover {
+  background: rgba(78, 205, 196, 0.1);
+  box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+#content:not(.hidden) {
+  display: block;
+}
