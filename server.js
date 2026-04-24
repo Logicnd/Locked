@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const crypto = require('crypto');
 const fs = require('fs').promises;
@@ -5,8 +6,9 @@ const session = require('express-session');
 const { v4: uuidv4 } = require('uuid');
 
 const app = express();
-const PORT = 3000;
-const DATA_FILE = './users.json';
+const PORT = process.env.PORT || 3000;
+const DATA_FILE = process.env.DATA_FILE || './users.json';
+const SESSION_SECRET = process.env.SESSION_SECRET || 'locked-fallback-secret-' + Math.random().toString(36);
 
 // In-memory storage with file persistence
 let users = new Map();
@@ -74,7 +76,7 @@ function getHint(username, attemptCount) {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
-  secret: 'locked-site-secret-' + Math.random().toString(36),
+  secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }
