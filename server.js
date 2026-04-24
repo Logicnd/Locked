@@ -254,7 +254,7 @@ app.post('/api/puzzle2/verify', async (req, res) => {
     
     return res.json({
       success: true,
-      message: "Puzzle 2 solved! You've proven worthy of the leaderboard.",
+      message: "Puzzle 2 solved! Phase 3 awaits.",
       rank: getLeaderboard().findIndex(u => u.id === user.id) + 1
     });
   }
@@ -265,7 +265,71 @@ app.post('/api/puzzle2/verify', async (req, res) => {
   });
 });
 
-// Leaderboard
+// Generate Puzzle 3 (binary challenge based on username)
+function generatePuzzle3(username) {
+  // Create a binary-encoded message based on username
+  const msg = `WELCOME_${username.toUpperCase()}`;
+  const binary = msg.split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join(' ');
+  return { binary, answer: msg };
+}
+
+// Puzzle 3 endpoint
+app.get('/api/puzzle3', (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: 'Access denied' });
+  }
+  
+  const user = Array.from(users.values()).find(u => u.id === req.session.userId);
+  if (!user) {
+    return res.status(401).json({ error: 'Identity not found' });
+  }
+  
+  const puzzle = generatePuzzle3(user.username);
+  
+  res.json({
+    challenge: "The System speaks in binary.",
+    hint: "Convert binary to ASCII. Each 8-bit sequence represents one character.",
+    data: puzzle.binary,
+    example: "01000001 01000010 01000011 = ABC"
+  });
+});
+
+// Verify Puzzle 3
+app.post('/api/puzzle3/verify', async (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: 'Access denied' });
+  }
+  
+  const { answer } = req.body;
+  const user = Array.from(users.values()).find(u => u.id === req.session.userId);
+  
+  if (!user) {
+    return res.status(401).json({ error: 'Identity not found' });
+  }
+  
+  const puzzle = generatePuzzle3(user.username);
+  const normalizedAnswer = answer.toUpperCase().replace(/\s/g, '');
+  const correctAnswer = puzzle.answer.replace(/_/g, '');
+  
+  if (normalizedAnswer === correctAnswer || answer.toUpperCase() === puzzle.answer) {
+    user.puzzle3_solved = true;
+    user.puzzle3_solved_at = Date.now();
+    await saveUsers();
+    
+    return res.json({
+      success: true,
+      message: "Puzzle 3 solved! You've mastered the binary code.",
+      rank: getLeaderboard3().findIndex(u => u.id === user.id) + 1
+    });
+  }
+  
+  res.status(403).json({
+    error: 'Incorrect. Study the binary carefully.',
+    attempts: (user.puzzle3_attempts = (user.puzzle3_attempts || 0) + 1)
+  });
+});
+
+// Leaderboard for Puzzle 2
 function getLeaderboard() {
   return Array.from(users.values())
     .filter(u => u.puzzle2_solved)
@@ -278,9 +342,18 @@ function getLeaderboard() {
     }));
 }
 
-app.get('/api/leaderboard', (req, res) => {
-  res.json({ leaderboard: getLeaderboard() });
-});
+// Leaderboard for Puzzle 3
+function getLeaderboard3() {
+  return Array.from(users.values())
+    .filter(u => u.puzzle3_solved)
+    .sort((a, b) => a.puzzle3_solved_at - b.puzzle3_solved_at)
+    .map((u, index) => ({
+      rank: index + 1,
+      username: u.username,
+      solved_at: u.puzzle3_solved_at,
+      time_taken: Math.floor((u.puzzle3_solved_at - u.created_at) / 1000)
+    }));
+}
 
 // Check puzzle 2 status
 app.get('/api/puzzle2/status', (req, res) => {
@@ -297,6 +370,32 @@ app.get('/api/puzzle2/status', (req, res) => {
     solved: !!user.puzzle2_solved,
     attempts: user.puzzle2_attempts || 0
   });
+});
+
+// Check puzzle 3 status
+app.get('/api/puzzle3/status', (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).json({ error: 'Access denied' });
+  }
+  
+  const user = Array.from(users.values()).find(u => u.id === req.session.userId);
+  if (!user) {
+    return res.status(401).json({ error: 'Identity not found' });
+  }
+  
+  res.json({
+    solved: !!user.puzzle3_solved,
+    attempts: user.puzzle3_attempts || 0
+  });
+});
+
+// Leaderboard endpoints
+app.get('/api/leaderboard', (req, res) => {
+  res.json({ leaderboard: getLeaderboard() });
+});
+
+app.get('/api/leaderboard3', (req, res) => {
+  res.json({ leaderboard: getLeaderboard3() });
 });
 
 // Initialize and start

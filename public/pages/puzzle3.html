@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PHASE 2 // HEX DECODER</title>
+  <title>PHASE 3 // BINARY DECODER</title>
   <link rel="stylesheet" href="/css/main.css" />
-  <link rel="stylesheet" href="/css/puzzle2.css" />
+  <link rel="stylesheet" href="/css/puzzle3.css" />
 </head>
 <body>
   <div class="noise"></div>
@@ -13,26 +13,26 @@
 
   <main class="stage">
     <div class="puzzle-container">
-      <div class="phase-badge">PHASE 2</div>
+      <div class="phase-badge">PHASE 3</div>
       
-      <h1 class="title" data-text="HEX DECODER">HEX DECODER</h1>
-      <p class="subtitle">The System speaks in code</p>
+      <h1 class="title glitch" data-text="BINARY DECODER">BINARY DECODER</h1>
+      <p class="subtitle">The System speaks in binary</p>
 
       <div class="instruction-card">
         <h3 class="card-title">📡 INCOMING TRANSMISSION</h3>
-        <p class="card-text">Convert hexadecimal values to ASCII characters.</p>
-        <p class="card-example">Example: <code>41 42 43</code> = <code>ABC</code></p>
+        <p class="card-text">Convert binary values to ASCII characters.</p>
+        <p class="card-example">Example: <code>01000001 01000010 01000011</code> = <code>ABC</code></p>
       </div>
 
-      <div class="hex-display-box">
-        <div class="hex-label">TRANSMISSION DATA</div>
-        <div id="hexData" class="hex-data">Loading...</div>
-        <div class="hex-glow"></div>
+      <div class="binary-display-box">
+        <div class="binary-label">TRANSMISSION DATA</div>
+        <div id="binaryData" class="binary-data pulse">Loading...</div>
+        <div class="binary-glow"></div>
       </div>
 
       <form id="puzzleForm" class="puzzle-form">
         <div class="input-group">
-          <input id="answer" type="text" autocomplete="off" placeholder="" required />
+          <input id="answer" type="text" autocomplete="off" placeholder=" " required />
           <label for="answer">DECODED MESSAGE</label>
           <span class="input-border"></span>
         </div>
@@ -41,11 +41,15 @@
 
         <button type="submit" class="submit-btn">
           <span class="btn-text">TRANSMIT</span>
+          <span class="btn-glitch"></span>
         </button>
       </form>
 
       <div class="hint-system">
-        <button id="hintBtn" class="hint-btn">💡 REQUEST HINT</button>
+        <button id="hintBtn" class="hint-btn">
+          <span class="hint-icon">💡</span>
+          <span class="hint-text">REQUEST HINT</span>
+        </button>
         <div id="hintDisplay" class="hint-display"></div>
       </div>
 
@@ -54,13 +58,13 @@
       </div>
 
       <div class="nav-links">
-        <a href="/pages/puzzle3.html" class="nav-link phase3">Proceed to Phase 3 →</a>
+        <a href="/pages/puzzle2.html" class="nav-link back">← Phase 2</a>
         <a href="/pages/leaderboard.html" class="nav-link skip">Skip to Leaderboard →</a>
       </div>
     </div>
   </main>
 
   <script src="/js/auth.js"></script>
-  <script src="/js/puzzle2.js"></script>
+  <script src="/js/puzzle3.js"></script>
 </body>
 </html>

@@ -130,14 +130,35 @@
   font-weight: bold;
 }
 
-.skip-link {
-  display: inline-block;
+/* Navigation Links */
+.nav-links {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.nav-link {
   font-size: 11px;
   color: var(--text-muted);
   text-decoration: none;
+  letter-spacing: 1px;
+  transition: color 0.2s;
 }
 
-.skip-link:hover {
+.nav-link:hover {
   color: var(--accent);
+}
+
+.nav-link.phase3 {
+  color: var(--accent);
+  opacity: 0.7;
+}
+
+.nav-link.phase3:hover {
+  opacity: 1;
 }

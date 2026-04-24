@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  const hexData = document.getElementById('hexData');
+  const binaryData = document.getElementById('binaryData');
   const form = document.getElementById('puzzleForm');
   const answer = document.getElementById('answer');
   const feedback = document.getElementById('feedback');
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-      const res = await fetch('/api/puzzle2/verify', {
+      const res = await fetch('/api/puzzle3/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ answer: ans })
@@ -44,13 +44,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         feedback.className = 'feedback success';
         feedback.style.color = 'var(--accent)';
         Typewriter.write(
-          `${data.message}`,
+          `${data.message} You ranked #${data.rank}!`,
           feedback,
           30
         );
 
         setTimeout(() => {
-          window.location.href = '/pages/puzzle3.html';
+          window.location.href = '/pages/leaderboard.html';
         }, 2000);
       } else {
         attempts = data.attempts || attempts + 1;
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         feedback.className = 'feedback error';
         feedback.style.color = '';
-        Typewriter.write(data.error || 'Incorrect. Study the hex.', feedback);
+        Typewriter.write(data.error || 'Incorrect. Study the binary.', feedback);
       }
     } catch (err) {
       feedback.className = 'feedback error';
@@ -71,8 +71,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   hintBtn.addEventListener('click', () => {
     hintLevel++;
     const hints = [
-      'Each hex pair represents one ASCII character.',
-      'Try an online hex-to-ASCII converter.',
+      'Each 8-bit binary sequence represents one ASCII character.',
+      'Try converting each binary byte to its decimal value, then to ASCII.',
       'The message starts with WELCOME_',
       `Your identity in uppercase is involved...`,
     ];
@@ -84,14 +84,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function loadPuzzle() {
     try {
-      const res = await fetch('/api/puzzle2');
+      const res = await fetch('/api/puzzle3');
       if (res.ok) {
         const data = await res.json();
-        hexData.textContent = data.data;
+        binaryData.textContent = data.data;
         puzzleLoaded = true;
+      } else {
+        binaryData.textContent = 'ERROR LOADING';
       }
     } catch (err) {
-      hexData.textContent = 'ERROR LOADING';
+      binaryData.textContent = 'ERROR LOADING';
     }
   }
 });
