@@ -174,6 +174,7 @@ const Terminal = () => {
     xp,
     level,
     badges,
+    currentPhase,
     theme: themeState
   } = useStore();
   

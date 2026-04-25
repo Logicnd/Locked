@@ -15,5 +15,12 @@
     "password_hash": "3aa877a7e885790e0b63a2425084b98e513aa00dd707794652c666708e0847f5",
     "attempts": 0,
     "created_at": 1776894257021
+  },
+  "bitch": {
+    "id": "626407ba-b291-4302-89ed-9b91e95ea367",
+    "username": "bitch",
+    "password_hash": "8234a633ea8af7dc7e70e3f068f13a991339308b488220a1224885450afeb319",
+    "attempts": 0,
+    "created_at": 1776978010090
   }
 }

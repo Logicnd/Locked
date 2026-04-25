@@ -1,6 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useStore } from '../store/useStore';
-import { Howl } from 'howler';
 
 // Sound URLs - these would be actual audio files in production
 const SOUNDS = {
