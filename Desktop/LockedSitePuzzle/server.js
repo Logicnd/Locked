@@ -305,22 +305,24 @@ const apiRoutes = require('./api/routes');
 // Mount new API routes
 app.use('/api/v2', apiRoutes);
 
-// Initialize and start
-loadUsers().then(() => {
-  app.listen(PORT, () => {
-    console.log(`🔒 LOCKED server running on http://localhost:${PORT}`);
-    console.log('   Puzzle: Your password is your username reversed');
-    console.log('   New API v2 available at /api/v2/*');
+// Initialize and start (only when running locally, not on Vercel)
+if (process.env.VERCEL !== '1') {
+  loadUsers().then(() => {
+    app.listen(PORT, () => {
+      console.log(`🔒 LOCKED server running on http://localhost:${PORT}`);
+      console.log('   Puzzle: Your password is your username reversed');
+      console.log('   New API v2 available at /api/v2/*');
+    });
   });
-});
+}
 
-// Export for Vercel and API usage
-module.exports = {
-  app,
-  users,
-  getAllUsers: async () => Array.from(users.values()),
-  saveUser: async (user) => {
-    users.set(user.id, user);
-    await saveUsers();
-  }
+// Export for Vercel serverless (default export must be app)
+module.exports = app;
+
+// Also export helpers for internal use (non-default exports)
+module.exports.users = users;
+module.exports.getAllUsers = async () => Array.from(users.values());
+module.exports.saveUser = async (user) => {
+  users.set(user.id, user);
+  await saveUsers();
 };
