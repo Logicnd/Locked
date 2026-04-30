@@ -7,6 +7,7 @@ const { v4: uuidv4 } = require('uuid');
 const app = express();
 const PORT = 3000;
 const DATA_FILE = './users.json';
+const CURRENT_PASSWORD_SCHEME = 2;
 
 // In-memory storage with file persistence
 let users = new Map();
@@ -14,6 +15,281 @@ let users = new Map();
 // Simple hash function using crypto
 function hashPassword(password) {
   return crypto.createHash('sha256').update(password).digest('hex');
+}
+
+function normalizeUsername(username = '') {
+  return String(username).trim().toLowerCase();
+}
+
+function compactIdentity(username) {
+  const normalized = normalizeUsername(username);
+  const compact = normalized.replace(/[^a-z0-9]/g, '');
+  return compact || normalized.replace(/\s+/g, '') || 'cipher';
+}
+
+function splitByPass(text) {
+  const firstPass = [];
+  const secondPass = [];
+
+  for (let index = 0; index < text.length; index += 1) {
+    if (index % 2 === 0) {
+      firstPass.push(text[index]);
+    } else {
+      secondPass.push(text[index]);
+    }
+  }
+
+  return {
+    oddPass: firstPass.join(''),
+    evenPass: secondPass.join('')
+  };
+}
+
+function uniqueCharacters(text) {
+  const seen = new Set();
+  let output = '';
+
+  for (const char of text) {
+    if (!seen.has(char)) {
+      seen.add(char);
+      output += char;
+    }
+  }
+
+  return output;
+}
+
+function alternatingCase(text) {
+  let letterIndex = 0;
+
+  return text
+    .split('')
+    .map((char) => {
+      if (!/[a-z]/i.test(char)) {
+        return char;
+      }
+
+      const output = letterIndex % 2 === 0 ? char.toUpperCase() : char.toLowerCase();
+      letterIndex += 1;
+      return output;
+    })
+    .join('');
+}
+
+function rotateText(text, shift) {
+  if (text.length <= 1) {
+    return text;
+  }
+
+  const normalizedShift = ((shift % text.length) + text.length) % text.length;
+  return text.slice(normalizedShift) + text.slice(0, normalizedShift);
+}
+
+function getIdentityMetrics(username) {
+  const normalized = normalizeUsername(username);
+  const base = compactIdentity(normalized);
+  const lettersOnly = base.replace(/[^a-z]/g, '');
+  const digitsOnly = base.replace(/[^0-9]/g, '');
+  const vowelCount = (lettersOnly.match(/[aeiou]/g) || []).length;
+  const consonantCount = Math.max(lettersOnly.length - vowelCount, 0);
+  const digitSum = digitsOnly.split('').reduce((sum, digit) => sum + Number(digit), 0);
+  const checksum = base.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  const { oddPass, evenPass } = splitByPass(base);
+  const rotation = base.length > 1 ? (checksum % (base.length - 1)) + 1 : 0;
+  const rotated = rotateText(base, rotation);
+  const unique = uniqueCharacters(base);
+  const midpoint = Math.ceil(base.length / 2);
+
+  return {
+    normalized,
+    base,
+    lettersOnly,
+    digitsOnly,
+    vowelCount,
+    consonantCount,
+    digitSum,
+    checksum,
+    oddPass,
+    evenPass,
+    rotation,
+    rotated,
+    unique,
+    midpoint,
+    length: base.length,
+    firstChar: base[0] || 'x',
+    lastChar: base.slice(-1) || 'x'
+  };
+}
+
+const keyProtocols = [
+  {
+    id: 'interlace',
+    label: 'Interlace',
+    descriptor: 'Two-pass weave',
+    description: 'Clean the identity, run the letters in two passes, then sign the result with a short biometric suffix.',
+    structure: '1st/3rd/5th characters first, then 2nd/4th/6th, then a metric pair.',
+    build: ({ oddPass, evenPass, length, vowelCount }) => `${oddPass}${evenPass}-${length}${vowelCount}`,
+    hints: ({ length, vowelCount }) => [
+      'Strip spaces and symbols before you start.',
+      'Take the 1st, 3rd, 5th characters first, then append the 2nd, 4th, 6th.',
+      `Finish with "-${length}${vowelCount}".`
+    ]
+  },
+  {
+    id: 'cadence',
+    label: 'Cadence',
+    descriptor: 'Alternating case',
+    description: 'The cleaned identity flips case as it moves, then closes with a punctuation stamp and letter counts.',
+    structure: 'Alternating case core, exclamation mark, then vowel and consonant counts.',
+    build: ({ base, vowelCount, consonantCount }) => `${alternatingCase(base)}!${vowelCount}${consonantCount}`,
+    hints: ({ vowelCount, consonantCount }) => [
+      'Strip spaces and symbols before you start.',
+      'Alternate the casing of each letter, beginning with uppercase.',
+      `End with "!${vowelCount}${consonantCount}".`
+    ]
+  },
+  {
+    id: 'orbit',
+    label: 'Orbit',
+    descriptor: 'Rotated uppercase',
+    description: 'Rotate the cleaned identity, convert it to uppercase, then mark it with a short numeric signature.',
+    structure: 'Rotated uppercase core, underscore, then a checksum marker.',
+    build: ({ rotated, checksum, digitSum, length }) => `${rotated.toUpperCase()}_${(checksum % 7) + 1}${digitSum || length}`,
+    hints: ({ rotation, checksum, digitSum, length }) => [
+      'Strip spaces and symbols before you start.',
+      `Rotate the cleaned identity left by ${rotation} character${rotation === 1 ? '' : 's'}.`,
+      `Uppercase it and end with "_${(checksum % 7) + 1}${digitSum || length}".`
+    ]
+  },
+  {
+    id: 'splice',
+    label: 'Splice',
+    descriptor: 'Split-core checksum',
+    description: 'The cleaned identity is split in half, the front is elevated, and the whole thing is sealed with a checksum fragment.',
+    structure: 'Uppercase front half, lowercase back half, and a two-digit checksum.',
+    build: ({ base, midpoint, checksum }) => {
+      const front = base.slice(0, midpoint).toUpperCase();
+      const back = base.slice(midpoint);
+      return `${front}.${back}.${String(checksum % 97).padStart(2, '0')}`;
+    },
+    hints: ({ midpoint, checksum }) => [
+      'Strip spaces and symbols before you start.',
+      `Split the cleaned identity after character ${midpoint}.`,
+      `Uppercase the front half and end with ".${String(checksum % 97).padStart(2, '0')}".`
+    ]
+  },
+  {
+    id: 'prism',
+    label: 'Prism',
+    descriptor: 'Deduped identity',
+    description: 'Repeated characters collapse into a cleaner core, then the key closes with initials from the original identity.',
+    structure: 'Deduped core, dash, then the original first and last characters plus length.',
+    build: ({ unique, firstChar, lastChar, length }) => `${unique}-${firstChar.toUpperCase()}${lastChar.toUpperCase()}${length}`,
+    hints: ({ firstChar, lastChar, length }) => [
+      'Strip spaces and symbols before you start.',
+      'Keep only the first occurrence of each character, from left to right.',
+      `Finish with "-${firstChar.toUpperCase()}${lastChar.toUpperCase()}${length}".`
+    ]
+  }
+];
+
+function getKeyProtocol(username) {
+  const metrics = getIdentityMetrics(username);
+  const protocol = keyProtocols[metrics.checksum % keyProtocols.length];
+  const answer = protocol.build(metrics);
+
+  return {
+    ...protocol,
+    answer,
+    metrics,
+    profile: {
+      protocol: protocol.label,
+      descriptor: protocol.descriptor,
+      clue: protocol.description,
+      structure: protocol.structure,
+      identityCore: metrics.base,
+      keyLength: answer.length
+    }
+  };
+}
+
+// Generate puzzle password from the active identity protocol
+function generatePuzzlePassword(username) {
+  return getKeyProtocol(username).answer;
+}
+
+function generateLegacyPuzzlePassword(username) {
+  return normalizeUsername(username).split('').reverse().join('');
+}
+
+function getPhase1AttemptStore(sessionState) {
+  if (!sessionState.phase1Attempts || typeof sessionState.phase1Attempts !== 'object') {
+    sessionState.phase1Attempts = {};
+  }
+
+  return sessionState.phase1Attempts;
+}
+
+function incrementPhase1Attempt(sessionState, username) {
+  const attempts = getPhase1AttemptStore(sessionState);
+  attempts[username] = (attempts[username] || 0) + 1;
+  return attempts[username];
+}
+
+function clearPhase1Attempt(sessionState, username) {
+  const attempts = getPhase1AttemptStore(sessionState);
+  delete attempts[username];
+}
+
+function getTaunt(username, attemptCount, protocol) {
+  const taunts = [
+    `${username}, the ${protocol.label.toLowerCase()} pattern is still misaligned.`,
+    'Closer, but the identity signature is drifting.',
+    'Right identity, wrong assembly order.',
+    `${username}, the system likes precision more than guesswork.`,
+    'The key is structured, not random. Read the profile again.',
+    'You found the door. Now match the protocol.',
+    `${username}, the cipher wants the cleaned identity, not the noisy one.`,
+    'The punctuation is part of the key. Do not skip it.'
+  ];
+
+  return taunts[(attemptCount - 1) % taunts.length];
+}
+
+function buildPhase1Failure(username, attemptCount) {
+  const protocol = getKeyProtocol(username);
+  const hints = protocol.hints(protocol.metrics);
+  const response = {
+    error: 'Access denied',
+    attemptCount,
+    profile: protocol.profile
+  };
+
+  if (attemptCount === 1) {
+    response.message = `${protocol.label} protocol active. The key format changed.`;
+  } else if (attemptCount <= hints.length + 1) {
+    response.hint = hints[attemptCount - 2];
+  } else {
+    response.taunt = getTaunt(username, attemptCount, protocol);
+  }
+
+  return response;
+}
+
+function setAuthenticatedSession(req, user) {
+  req.session.userId = user.id;
+  req.session.user = {
+    id: user.id,
+    username: user.username
+  };
+}
+
+function getUserBySession(req) {
+  if (!req.session.userId) {
+    return null;
+  }
+
+  return Array.from(users.values()).find((user) => user.id === req.session.userId) || null;
 }
 
 // Load users from file
@@ -33,48 +309,11 @@ async function saveUsers() {
   await fs.writeFile(DATA_FILE, JSON.stringify(obj, null, 2));
 }
 
-// Generate puzzle password from username (reversed)
-function generatePuzzlePassword(username) {
-  return username.toLowerCase().split('').reverse().join('');
-}
-
-// Get messages
-function getTaunt(username, attemptCount) {
-  const taunts = [
-    `So close, ${username}... yet so far.`,
-    `${username}, you're making this harder than it needs to be.`,
-    `Persistence is key, ${username}.`,
-    `${username}, the answer is staring at you.`,
-    "Maybe look at your name differently?",
-    `The system recognizes you, ${username}. But do you recognize it?`,
-    `${username}, reverse your thinking.`,
-    `Patterns, ${username}. Look for patterns.`,
-    `Each failure teaches, ${username}.`,
-    `${username}, think backwards.`
-  ];
-  return taunts[Math.floor(Math.random() * taunts.length)];
-}
-
-function getHint(username, attemptCount) {
-  const reversed = username.toLowerCase().split('').reverse().join('');
-  const hints = [
-    "There's something backwards about this...",
-    "Try reading it in reverse.",
-    `The last letter is '${username.slice(-1)}'`,
-    `The first letter should be '${username.slice(-1)}'`,
-    "Think mirror...",
-    `It starts with '${reversed[0]}' and ends with '${reversed.slice(-1)}'`,
-    "What if you spelled your name backwards?",
-    "The key is the mirror of your identity."
-  ];
-  return hints[Math.min(attemptCount - 1, hints.length - 1)];
-}
-
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'locked-site-secret-' + Math.random().toString(36),
+  secret: process.env.SESSION_SECRET || `locked-site-secret-${Math.random().toString(36)}`,
   resave: false,
   saveUninitialized: true,
   cookie: { secure: process.env.NODE_ENV === 'production', maxAge: 24 * 60 * 60 * 1000 }
@@ -90,212 +329,222 @@ app.get('/', (req, res) => {
   res.redirect('/pages/login.html');
 });
 
+app.get('/pages/leaderboard.html', (req, res) => {
+  res.redirect('/pages/unlocked.html');
+});
+
+app.get('/api/key-profile', (req, res) => {
+  const username = normalizeUsername(req.query.username || '');
+
+  if (!username) {
+    return res.status(400).json({ error: 'Identity required' });
+  }
+
+  const protocol = getKeyProtocol(username);
+  return res.json({ profile: protocol.profile });
+});
+
 // Routes
 app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
-  
+
   if (!username || !password) {
     return res.status(400).json({ error: 'Identity and key required' });
   }
-  
-  const lowerUsername = username.toLowerCase();
+
+  const lowerUsername = normalizeUsername(username);
   const user = users.get(lowerUsername);
-  const puzzlePassword = generatePuzzlePassword(lowerUsername);
-  
-  // New user - check if they solved the puzzle
+  const currentPassword = generatePuzzlePassword(lowerUsername);
+  const currentHash = hashPassword(currentPassword);
+  const legacyHash = hashPassword(generateLegacyPuzzlePassword(lowerUsername));
+
   if (!user) {
-    if (password.toLowerCase() === puzzlePassword) {
-      // Auto-register on correct puzzle answer
+    if (password === currentPassword) {
       const id = uuidv4();
-      const hash = hashPassword(password);
-      
-      users.set(lowerUsername, {
+      const createdAt = Date.now();
+      const newUser = {
         id,
         username: lowerUsername,
-        password_hash: hash,
+        password_hash: currentHash,
+        password_scheme: CURRENT_PASSWORD_SCHEME,
         attempts: 0,
-        created_at: Date.now()
-      });
-      
+        created_at: createdAt,
+        updated_at: createdAt
+      };
+
+      users.set(lowerUsername, newUser);
       await saveUsers();
-      req.session.userId = id;
-      
-      return res.json({ 
-        success: true, 
-        message: 'Puzzle solved. Access granted.',
+
+      clearPhase1Attempt(req.session, lowerUsername);
+      setAuthenticatedSession(req, newUser);
+
+      return res.json({
+        success: true,
+        message: 'Protocol matched. Access granted.',
         user: { id, username: lowerUsername }
       });
     }
-    
-    // Wrong answer
-    return res.status(403).json({
-      error: 'Access denied',
-      taunt: getTaunt(lowerUsername, 1),
-      hint: null,
-      attemptCount: 1
-    });
+
+    const attemptCount = incrementPhase1Attempt(req.session, lowerUsername);
+    return res.status(403).json(buildPhase1Failure(lowerUsername, attemptCount));
   }
-  
-  // Existing user - verify password
+
   const inputHash = hashPassword(password);
-  
-  if (inputHash !== user.password_hash) {
+  const matchesStoredPassword = inputHash === user.password_hash;
+  const matchesCurrentProtocol = inputHash === currentHash;
+  const matchesLegacyProtocol = !user.password_scheme && inputHash === legacyHash;
+
+  if (!matchesStoredPassword && !matchesCurrentProtocol && !matchesLegacyProtocol) {
     user.attempts = (user.attempts || 0) + 1;
+    user.updated_at = Date.now();
     await saveUsers();
-    
-    let response = {
-      error: 'Access denied',
-      attemptCount: user.attempts
-    };
-    
-    if (user.attempts === 1) {
-      response.message = "Hm, that wasn't it...";
-    } else if (user.attempts === 2) {
-      response.message = "The key has a connection to your identity...";
-    } else if (user.attempts % 3 === 0) {
-      response.hint = getHint(lowerUsername, user.attempts);
-    } else {
-      response.taunt = getTaunt(lowerUsername, user.attempts);
-    }
-    
-    return res.status(403).json(response);
+
+    return res.status(403).json(buildPhase1Failure(lowerUsername, user.attempts));
   }
-  
-  // Success
+
+  const needsUpgrade = user.password_scheme !== CURRENT_PASSWORD_SCHEME || matchesCurrentProtocol;
+  let successMessage = 'Access granted.';
+
+  if (needsUpgrade) {
+    user.password_hash = currentHash;
+    user.password_scheme = CURRENT_PASSWORD_SCHEME;
+    successMessage = matchesStoredPassword && !matchesCurrentProtocol
+      ? 'Legacy key accepted. Identity protocol upgraded.'
+      : 'Protocol matched. Access granted.';
+  }
+
   user.attempts = 0;
+  user.updated_at = Date.now();
   await saveUsers();
-  req.session.userId = user.id;
-  
-  res.json({ 
-    success: true, 
-    message: 'Access granted.',
+
+  clearPhase1Attempt(req.session, lowerUsername);
+  setAuthenticatedSession(req, user);
+
+  return res.json({
+    success: true,
+    message: successMessage,
     user: { id: user.id, username: user.username }
   });
 });
 
 app.get('/api/me', (req, res) => {
-  if (!req.session.userId) {
+  const user = getUserBySession(req);
+
+  if (!user) {
     return res.status(401).json({ error: 'Not authenticated' });
   }
-  
-  const user = Array.from(users.values()).find(u => u.id === req.session.userId);
-  if (!user) {
-    return res.status(401).json({ error: 'Identity not found' });
-  }
-  
-  res.json({ user: { id: user.id, username: user.username } });
+
+  setAuthenticatedSession(req, user);
+
+  return res.json({
+    user: {
+      id: user.id,
+      username: user.username
+    }
+  });
 });
 
 app.post('/api/logout', (req, res) => {
-  req.session.destroy();
-  res.json({ success: true });
+  req.session.destroy(() => {
+    res.json({ success: true });
+  });
 });
 
 app.post('/api/reset', async (req, res) => {
-  const { username } = req.body;
-  const user = users.get(username.toLowerCase());
+  const username = normalizeUsername(req.body.username || '');
+  const user = users.get(username);
+
   if (user) {
     user.attempts = 0;
+    user.updated_at = Date.now();
     await saveUsers();
   }
+
+  clearPhase1Attempt(req.session, username);
   res.json({ success: true });
 });
 
 // Generate Puzzle 2 (hex challenge based on username)
 function generatePuzzle2(username) {
-  // Create a hex-encoded message based on username
-  const msg = `WELCOME_${username.toUpperCase()}`;
-  const hex = msg.split('').map(c => c.charCodeAt(0).toString(16).toUpperCase()).join(' ');
+  const msg = `ARCHIVE_${compactIdentity(username).toUpperCase()}_OPEN`;
+  const hex = msg
+    .split('')
+    .map((char) => char.charCodeAt(0).toString(16).toUpperCase())
+    .join(' ');
+
   return { hex, answer: msg };
 }
 
 // Puzzle 2 endpoint
 app.get('/api/puzzle2', (req, res) => {
-  if (!req.session.userId) {
+  const user = getUserBySession(req);
+
+  if (!user) {
     return res.status(401).json({ error: 'Access denied' });
   }
-  
-  const user = Array.from(users.values()).find(u => u.id === req.session.userId);
-  if (!user) {
-    return res.status(401).json({ error: 'Identity not found' });
-  }
-  
+
   const puzzle = generatePuzzle2(user.username);
-  
-  res.json({
-    challenge: "The System speaks in hexadecimal.",
-    hint: "Convert hex to ASCII. Each pair represents one character.",
+
+  return res.json({
+    challenge: 'The archive signal is hex-encoded.',
+    hint: 'Convert each hex pair into an ASCII character.',
     data: puzzle.hex,
-    example: "41 42 43 = ABC"
+    example: '41 42 43 = ABC'
   });
 });
 
 // Verify Puzzle 2
 app.post('/api/puzzle2/verify', async (req, res) => {
-  if (!req.session.userId) {
+  const user = getUserBySession(req);
+
+  if (!user) {
     return res.status(401).json({ error: 'Access denied' });
   }
-  
+
   const { answer } = req.body;
-  const user = Array.from(users.values()).find(u => u.id === req.session.userId);
-  
-  if (!user) {
-    return res.status(401).json({ error: 'Identity not found' });
-  }
-  
   const puzzle = generatePuzzle2(user.username);
-  const normalizedAnswer = answer.toUpperCase().replace(/\s/g, '');
+  const normalizedAnswer = String(answer || '').toUpperCase().replace(/\s/g, '');
   const correctAnswer = puzzle.answer.replace(/_/g, '');
-  
-  if (normalizedAnswer === correctAnswer || answer.toUpperCase() === puzzle.answer) {
+
+  if (normalizedAnswer === correctAnswer || String(answer || '').toUpperCase() === puzzle.answer) {
     user.puzzle2_solved = true;
     user.puzzle2_solved_at = Date.now();
+    user.updated_at = Date.now();
     await saveUsers();
-    
+
     return res.json({
       success: true,
-      message: "Puzzle 2 solved! You've proven worthy of the leaderboard.",
-      rank: getLeaderboard().findIndex(u => u.id === user.id) + 1
+      message: 'Phase 2 cleared. Archive channel unlocked.'
     });
   }
-  
-  res.status(403).json({
+
+  user.puzzle2_attempts = (user.puzzle2_attempts || 0) + 1;
+  user.updated_at = Date.now();
+  await saveUsers();
+
+  return res.status(403).json({
     error: 'Incorrect. Study the hex carefully.',
-    attempts: (user.puzzle2_attempts = (user.puzzle2_attempts || 0) + 1)
+    attempts: user.puzzle2_attempts
   });
 });
 
-// Leaderboard
-function getLeaderboard() {
-  return Array.from(users.values())
-    .filter(u => u.puzzle2_solved)
-    .sort((a, b) => a.puzzle2_solved_at - b.puzzle2_solved_at)
-    .map((u, index) => ({
-      rank: index + 1,
-      username: u.username,
-      solved_at: u.puzzle2_solved_at,
-      time_taken: Math.floor((u.puzzle2_solved_at - u.created_at) / 1000)
-    }));
-}
-
 app.get('/api/leaderboard', (req, res) => {
-  res.json({ leaderboard: getLeaderboard() });
+  res.status(410).json({ error: 'Leaderboard retired.' });
 });
 
 // Check puzzle 2 status
 app.get('/api/puzzle2/status', (req, res) => {
-  if (!req.session.userId) {
+  const user = getUserBySession(req);
+
+  if (!user) {
     return res.status(401).json({ error: 'Access denied' });
   }
-  
-  const user = Array.from(users.values()).find(u => u.id === req.session.userId);
-  if (!user) {
-    return res.status(401).json({ error: 'Identity not found' });
-  }
-  
+
   res.json({
     solved: !!user.puzzle2_solved,
-    attempts: user.puzzle2_attempts || 0
+    attempts: user.puzzle2_attempts || 0,
+    solvedAt: user.puzzle2_solved_at || null,
+    timeTaken: user.puzzle2_solved_at ? Math.floor((user.puzzle2_solved_at - user.created_at) / 1000) : null
   });
 });
 
@@ -309,20 +558,18 @@ app.use('/api/v2', apiRoutes);
 if (process.env.VERCEL !== '1') {
   loadUsers().then(() => {
     app.listen(PORT, () => {
-      console.log(`🔒 LOCKED server running on http://localhost:${PORT}`);
-      console.log('   Puzzle: Your password is your username reversed');
-      console.log('   New API v2 available at /api/v2/*');
+      console.log(`LOCKED server running on http://localhost:${PORT}`);
+      console.log('   Phase 1: identity-specific key protocols enabled');
+      console.log('   API v2 available at /api/v2/*');
     });
   });
 }
 
-// Export for Vercel serverless (default export must be app)
+// Export for Vercel serverless
 module.exports = app;
-
-// Also export helpers for internal use (non-default exports)
 module.exports.users = users;
 module.exports.getAllUsers = async () => Array.from(users.values());
 module.exports.saveUser = async (user) => {
-  users.set(user.id, user);
+  users.set(normalizeUsername(user.username), user);
   await saveUsers();
 };

@@ -1,13 +1,40 @@
-.lock-container {
-  text-align: center;
+.login-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(320px, 430px);
+  gap: clamp(20px, 3vw, 28px);
+  align-items: stretch;
+  min-height: calc(100vh - 64px);
+}
+
+.hero-panel,
+.form-panel {
+  padding: clamp(24px, 3vw, 34px);
+}
+
+.hero-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.6rem;
+}
+
+.lock-intro {
+  display: grid;
+  gap: 1.1rem;
 }
 
 .lock-icon {
-  width: 60px;
-  height: 60px;
-  margin: 0 auto 24px;
-  color: var(--text-muted);
-  animation: pulse 3s ease-in-out infinite;
+  width: 78px;
+  height: 78px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  border-radius: 24px;
+  border: 1px solid rgba(125, 226, 209, 0.24);
+  background: rgba(125, 226, 209, 0.08);
+  color: var(--accent);
+  box-shadow: inset 0 0 28px rgba(125, 226, 209, 0.08);
 }
 
 .lock-icon svg {
@@ -15,46 +42,174 @@
   height: 100%;
 }
 
-.title {
-  font-size: 36px;
-  font-weight: 300;
-  letter-spacing: 12px;
-  color: var(--text-muted);
-  margin-bottom: 8px;
+.hero-copy {
+  max-width: 56ch;
 }
 
-.subtitle {
-  font-size: 10px;
+.hero-copy .title {
+  margin-top: 0.3rem;
+  margin-bottom: 1rem;
+}
+
+.protocol-card {
+  display: grid;
+  gap: 1rem;
+  padding: 1.35rem;
+  border: 1px solid rgba(125, 226, 209, 0.14);
+  background: rgba(5, 12, 17, 0.54);
+}
+
+.protocol-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.protocol-kicker {
+  font-size: 0.74rem;
+  letter-spacing: 0.18rem;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+.protocol-tag {
+  padding: 0.38rem 0.7rem;
+  border: 1px solid rgba(125, 226, 209, 0.2);
+  background: rgba(125, 226, 209, 0.08);
+  color: var(--accent);
+  font-size: 0.72rem;
+  letter-spacing: 0.12rem;
+  text-transform: uppercase;
+}
+
+.protocol-copy {
+  color: var(--text-soft);
+  line-height: 1.7;
+  font-size: 0.93rem;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.profile-stat {
+  padding: 0.95rem 1rem;
+  border: 1px solid rgba(125, 226, 209, 0.12);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.profile-label {
+  display: block;
+  margin-bottom: 0.45rem;
   color: var(--text-muted);
-  letter-spacing: 4px;
-  margin-bottom: 40px;
-  opacity: 0.7;
+  font-size: 0.68rem;
+  letter-spacing: 0.16rem;
+  text-transform: uppercase;
+}
+
+.profile-stat strong {
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.protocol-structure {
+  color: var(--text-muted);
+  line-height: 1.65;
+  font-size: 0.86rem;
+}
+
+.hint-zone {
+  display: grid;
+  gap: 0.7rem;
+  padding: 1.2rem 1.3rem;
+  border: 1px solid rgba(244, 191, 117, 0.16);
+  background: rgba(244, 191, 117, 0.05);
+}
+
+.hint-kicker {
+  color: var(--warning);
+  font-size: 0.72rem;
+  letter-spacing: 0.18rem;
+  text-transform: uppercase;
+}
+
+.hint-text {
+  color: var(--text-soft);
+  line-height: 1.7;
+  font-size: 0.9rem;
+}
+
+.form-panel {
+  display: grid;
+  gap: 1.35rem;
+  align-content: center;
+}
+
+.form-header {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.form-copy {
+  color: var(--text-soft);
+  line-height: 1.7;
+  font-size: 0.92rem;
 }
 
 .login-form {
-  margin-bottom: 32px;
+  display: grid;
+  gap: 1rem;
 }
 
 .attempts {
-  font-size: 10px;
-  color: var(--text-muted);
-  letter-spacing: 2px;
-  margin-top: 12px;
+  min-height: 1rem;
+  color: var(--warning);
+  font-size: 0.72rem;
+  letter-spacing: 0.18rem;
+  text-transform: uppercase;
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.2s ease;
 }
 
 .attempts.show {
   opacity: 1;
 }
 
-.hint-zone {
-  border-top: 1px solid var(--border);
-  padding-top: 24px;
+.trust-note {
+  padding-top: 0.1rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+  font-size: 0.8rem;
 }
 
-.hint-text {
-  font-size: 11px;
-  color: var(--text-muted);
-  font-style: italic;
+@media (max-width: 900px) {
+  .login-layout {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .form-panel {
+    order: -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero-panel,
+  .form-panel {
+    padding: 20px;
+  }
+
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .protocol-head {
+    align-items: flex-start;
+  }
 }

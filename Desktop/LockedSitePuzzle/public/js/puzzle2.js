@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', async () => {
-  // Require authentication
   const auth = await Auth.check();
   if (!auth) {
     window.location.href = '/pages/login.html';
     return;
   }
 
+  const identityChip = document.getElementById('identityChip');
   const hexData = document.getElementById('hexData');
   const form = document.getElementById('puzzleForm');
   const answer = document.getElementById('answer');
@@ -15,17 +15,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   const hintDisplay = document.getElementById('hintDisplay');
 
   let attempts = 0;
-  let puzzleLoaded = false;
+  let hintLevel = 0;
 
-  // Load puzzle data
-  loadPuzzle();
+  identityChip.textContent = auth.user.username;
 
-  // Form submission
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const ans = answer.value.trim();
-    if (!ans) {
+  await Promise.all([loadPuzzle(), loadStatus()]);
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const value = answer.value.trim();
+    if (!value) {
       feedback.className = 'feedback error';
       Typewriter.write('Enter the decoded message.', feedback);
       return;
@@ -35,82 +35,90 @@ document.addEventListener('DOMContentLoaded', async () => {
       const res = await fetch('/api/puzzle2/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answer: ans })
+        body: JSON.stringify({ answer: value })
       });
 
       const data = await res.json();
 
       if (res.ok && data.success) {
         feedback.className = 'feedback success';
-        feedback.style.color = 'var(--accent)';
-        Typewriter.write(
-          `${data.message} You ranked #${data.rank}!`,
-          feedback,
-          30
-        );
+        Typewriter.write(`${data.message} Returning to hub...`, feedback, 24);
 
         setTimeout(() => {
-          window.location.href = '/pages/leaderboard.html';
-        }, 2000);
-      } else {
-        attempts = data.attempts || attempts + 1;
-        attemptCount.textContent = attempts;
-        
-        feedback.className = 'feedback error';
-        feedback.style.color = '';
-        Typewriter.write(data.error || 'Incorrect. Study the hex.', feedback);
+          window.location.href = '/pages/unlocked.html?phase2=cleared';
+        }, 1200);
+        return;
       }
+
+      attempts = data.attempts || attempts + 1;
+      attemptCount.textContent = attempts;
+
+      feedback.className = 'feedback error';
+      Typewriter.write(data.error || 'Incorrect. Study the hex carefully.', feedback, 28);
     } catch (err) {
       feedback.className = 'feedback error';
       Typewriter.write('System error. Try again.', feedback);
     }
   });
 
-  // Hint button
-  let hintLevel = 0;
   hintBtn.addEventListener('click', () => {
-    hintLevel++;
+    hintLevel += 1;
     const hints = [
-      'Each hex pair represents one ASCII character.',
-      'Try an online hex-to-ASCII converter.',
-      'The message starts with WELCOME_',
-      `Your identity in uppercase is involved...`,
+      'Each hex pair becomes one ASCII character.',
+      'The phrase starts with ARCHIVE_.',
+      'The final word is OPEN.',
+      'Your cleaned identity appears in uppercase between those two parts.'
     ];
-    
-    if (hintLevel <= hints.length) {
-      hintDisplay.textContent = `HINT ${hintLevel}: ${hints[hintLevel - 1]}`;
-    }
+
+    hintDisplay.textContent = hints[Math.min(hintLevel - 1, hints.length - 1)];
   });
 
   async function loadPuzzle() {
     try {
       const res = await fetch('/api/puzzle2');
-      if (res.ok) {
-        const data = await res.json();
-        hexData.textContent = data.data;
-        puzzleLoaded = true;
+      if (!res.ok) {
+        throw new Error('Puzzle unavailable');
       }
+
+      const data = await res.json();
+      hexData.textContent = data.data;
     } catch (err) {
-      hexData.textContent = 'ERROR LOADING';
+      hexData.textContent = 'Transmission unavailable';
+    }
+  }
+
+  async function loadStatus() {
+    try {
+      const res = await fetch('/api/puzzle2/status');
+      if (!res.ok) {
+        return;
+      }
+
+      const data = await res.json();
+      attempts = data.attempts || 0;
+      attemptCount.textContent = attempts;
+    } catch (err) {
+      attemptCount.textContent = attempts;
     }
   }
 });
 
-// Typewriter fallback (if auth.js not loaded)
 const Typewriter = window.Typewriter || {
   timeout: null,
   write(text, element, speed = 35) {
     clearTimeout(this.timeout);
     element.textContent = '';
     element.classList.add('typewriter');
-    let i = 0;
+
+    let index = 0;
     const type = () => {
-      if (i < text.length) {
-        element.textContent += text.charAt(i);
-        i++;
+      if (index < text.length) {
+        element.textContent += text.charAt(index);
+        index += 1;
         this.timeout = setTimeout(type, speed);
       }
     };
+
     type();
   }
 };

@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>UNLOCKED // PHASE 1</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LOCKED // HUB</title>
   <link rel="stylesheet" href="/css/main.css" />
   <link rel="stylesheet" href="/css/unlocked.css" />
 </head>
@@ -12,54 +12,87 @@
   <div class="scanlines"></div>
 
   <main class="stage">
-    <div class="unlock-container">
-      <div class="unlock-icon pulse">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-          <rect x="5" y="11" width="14" height="10" rx="2" />
-          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-          <circle cx="12" cy="16" r="1" fill="currentColor" />
-        </svg>
-      </div>
+    <section class="unlock-layout">
+      <div class="hero-card panel">
+        <div class="hero-header">
+          <div class="hero-title">
+            <div class="unlock-icon pulse">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                <rect x="5" y="11" width="14" height="10" rx="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                <circle cx="12" cy="16" r="1" fill="currentColor" />
+              </svg>
+            </div>
 
-      <h1 class="title success" data-text="ACCESS GRANTED">ACCESS GRANTED</h1>
-      <p class="subtitle identity" id="identityDisplay">Welcome, unknown</p>
+            <div>
+              <p class="eyebrow">System Hub</p>
+              <h1 class="title success">Access Granted</h1>
+              <p class="subtitle identity" id="identityDisplay">Welcome, unknown.</p>
+            </div>
+          </div>
 
-      <div class="terminal-box">
-        <div class="terminal-header">
-          <span class="terminal-dot red"></span>
-          <span class="terminal-dot yellow"></span>
-          <span class="terminal-dot green"></span>
-          <span class="terminal-title">SYSTEM LOG</span>
+          <span class="status-pill" id="phaseStatus" data-state="pending">Phase 2 pending</span>
         </div>
-        <div class="terminal-body">
-          <p class="log-line"><span class="timestamp">[00:00]</span> Authentication successful</p>
-          <p class="log-line"><span class="timestamp">[00:01]</span> Security clearance: LEVEL 1</p>
-          <p class="log-line"><span class="timestamp">[00:02]</span> Puzzle 1 completed</p>
-          <p class="log-line pulse"><span class="timestamp">[00:03]</span> <span id="nextUnlock">Phase 2 awaiting...</span></p>
+
+        <div id="hubNotice" class="hub-notice"></div>
+
+        <div class="progress-card">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+            <span class="progress-text" id="progressText">33% system unlocked</span>
+          </div>
+        </div>
+
+        <div class="status-grid">
+          <div class="stat-card">
+            <span class="stat-label">Access tier</span>
+            <strong id="accessTier">Level 1</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Phase 2 attempts</span>
+            <strong id="phaseAttempts">0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Archive status</span>
+            <strong id="archiveStatus">Awaiting decode</strong>
+          </div>
+        </div>
+
+        <div class="action-grid">
+          <a href="/pages/puzzle2.html" class="action-btn primary" id="phaseAction">
+            <div class="btn-copy">
+              <span class="btn-label" id="actionLabel">Continue to phase 2</span>
+              <span class="btn-sub" id="actionSub">Decode the archive transmission</span>
+            </div>
+            <span class="btn-arrow">></span>
+          </a>
+
+          <button id="logoutBtn" class="action-btn secondary" type="button">
+            <span class="btn-label">Disconnect</span>
+          </button>
         </div>
       </div>
 
-      <div class="progress-bar">
-        <div class="progress-fill" style="width: 33%"></div>
-        <span class="progress-text">33% SYSTEM UNLOCKED</span>
-      </div>
+      <div class="log-card panel">
+        <p class="eyebrow">System Log</p>
+        <h2 class="panel-title">Current state</h2>
 
-      <div class="action-grid">
-        <a href="/pages/puzzle2.html" class="action-btn primary">
-          <span class="btn-icon">▶</span>
-          <span class="btn-label">CONTINUE</span>
-          <span class="btn-sub">Phase 2 Challenge</span>
-        </a>
-        
-        <a href="/pages/leaderboard.html" class="action-btn">
-          <span class="btn-icon">🏆</span>
-          <span class="btn-label">LEADERBOARD</span>
-          <span class="btn-sub">View Rankings</span>
-        </a>
-      </div>
+        <div class="log-list">
+          <p class="log-line"><span>[00:00]</span> Authentication protocol matched.</p>
+          <p class="log-line"><span>[00:01]</span> Legacy mirror passwords retired from the main flow.</p>
+          <p class="log-line"><span>[00:02]</span> Identity-specific key recipes now active.</p>
+          <p class="log-line emphasis pulse" id="nextUnlock"><span>[00:03]</span> Phase 2 archive decode awaiting input.</p>
+        </div>
 
-      <button id="logoutBtn" class="logout-link">DISCONNECT</button>
-    </div>
+        <div class="debrief-card">
+          <p class="debrief-title">Protocol refresh</p>
+          <p class="debrief-text">
+            Passwords no longer lean on simple reversed usernames. Each identity gets its own build rule so the entry
+            puzzle feels more distinct from user to user.
+          </p>
+        </div>
+      </div>
+    </section>
   </main>
 
   <script src="/js/auth.js"></script>

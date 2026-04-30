@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>LOCKED // PHASE 0</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LOCKED // PHASE 1</title>
   <link rel="stylesheet" href="/css/main.css" />
   <link rel="stylesheet" href="/css/login.css" />
 </head>
@@ -12,44 +12,95 @@
   <div class="scanlines"></div>
 
   <main class="stage">
-    <div class="lock-container">
-      <div class="lock-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-          <rect x="5" y="11" width="14" height="10" rx="2" />
-          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-        </svg>
-      </div>
-      
-      <h1 class="title glitch" data-text="LOCKED">LOCKED</h1>
-      <p class="subtitle">RESTRICTED SYSTEM ACCESS</p>
+    <section class="login-layout">
+      <div class="hero-panel panel">
+        <div class="lock-intro">
+          <div class="lock-icon pulse">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+              <rect x="5" y="11" width="14" height="10" rx="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+          </div>
 
-      <form id="loginForm" class="login-form">
-        <div class="input-group">
-          <input id="username" type="text" autocomplete="off" placeholder="" required />
-          <label for="username">IDENTITY</label>
-          <span class="input-border"></span>
+          <div class="hero-copy">
+            <p class="eyebrow">LOCKED / Access Gate</p>
+            <h1 class="title glitch" data-text="LOCKED">LOCKED</h1>
+            <p class="subtitle">
+              Phase 1 now uses identity-specific key protocols. Different usernames follow different recipes, so the
+              puzzle feels less recycled and far less guessable.
+            </p>
+          </div>
         </div>
 
-        <div class="input-group">
-          <input id="password" type="password" autocomplete="off" placeholder="" required />
-          <button type="button" id="togglePwd" class="toggle-btn" tabindex="-1">👁</button>
-          <label for="password">KEY</label>
-          <span class="input-border"></span>
+        <div class="protocol-card" id="profileCard">
+          <div class="protocol-head">
+            <span class="protocol-kicker">Signal Profile</span>
+            <span class="protocol-tag" id="protocolTag">Awaiting identity</span>
+          </div>
+          <p class="protocol-copy" id="profileClue">
+            Enter an identity to load the active protocol summary for that user.
+          </p>
+          <div class="profile-grid">
+            <div class="profile-stat">
+              <span class="profile-label">Identity core</span>
+              <strong id="profileCore">-</strong>
+            </div>
+            <div class="profile-stat">
+              <span class="profile-label">Key length</span>
+              <strong id="profileLength">-</strong>
+            </div>
+          </div>
+          <p class="protocol-structure" id="profileStructure">
+            The profile will describe the shape of the key without revealing the answer.
+          </p>
         </div>
 
-        <div id="feedback" class="feedback"></div>
-        <div id="attemptTracker" class="attempts"></div>
-
-        <button type="submit" class="submit-btn">
-          <span class="btn-text">AUTHENTICATE</span>
-          <span class="btn-glitch"></span>
-        </button>
-      </form>
-
-      <div class="hint-zone">
-        <p class="hint-text">The system recognizes patterns...</p>
+        <div class="hint-zone">
+          <p class="hint-kicker">Field notes</p>
+          <p class="hint-text">
+            Spaces and symbols get stripped before most keys are built. Use the live profile as your starting point,
+            then let failed attempts reveal sharper hints.
+          </p>
+        </div>
       </div>
-    </div>
+
+      <div class="form-panel panel">
+        <div class="form-header">
+          <p class="eyebrow">Phase 1</p>
+          <h2 class="panel-title">Authenticate</h2>
+          <p class="form-copy">
+            The first solve still creates the account automatically. If you used the old mirror-style password before,
+            the system will let you in once and upgrade the account to the new protocol.
+          </p>
+        </div>
+
+        <form id="loginForm" class="login-form">
+          <div class="input-group">
+            <input id="username" type="text" autocomplete="off" placeholder=" " required />
+            <label for="username">Identity</label>
+            <span class="input-border"></span>
+          </div>
+
+          <div class="input-group">
+            <input id="password" type="password" autocomplete="off" placeholder=" " required />
+            <button type="button" id="togglePwd" class="toggle-btn" tabindex="-1">Show</button>
+            <label for="password">Key</label>
+            <span class="input-border"></span>
+          </div>
+
+          <div id="feedback" class="feedback"></div>
+          <div id="attemptTracker" class="attempts"></div>
+
+          <button type="submit" class="submit-btn">
+            <span class="btn-text">Authenticate</span>
+          </button>
+        </form>
+
+        <p class="trust-note">
+          Profile previews are descriptive, not revealing. The actual key still has to be assembled correctly.
+        </p>
+      </div>
+    </section>
   </main>
 
   <script src="/js/auth.js"></script>

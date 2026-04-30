@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PHASE 2 // HEX DECODER</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LOCKED // PHASE 2</title>
   <link rel="stylesheet" href="/css/main.css" />
   <link rel="stylesheet" href="/css/puzzle2.css" />
 </head>
@@ -12,49 +12,65 @@
   <div class="scanlines"></div>
 
   <main class="stage">
-    <div class="puzzle-container">
-      <div class="phase-badge">PHASE 2</div>
-      
-      <h1 class="title" data-text="HEX DECODER">HEX DECODER</h1>
-      <p class="subtitle">The System speaks in code</p>
-
-      <div class="instruction-card">
-        <h3 class="card-title">📡 INCOMING TRANSMISSION</h3>
-        <p class="card-text">Convert hexadecimal values to ASCII characters.</p>
-        <p class="card-example">Example: <code>41 42 43</code> = <code>ABC</code></p>
-      </div>
-
-      <div class="hex-display-box">
-        <div class="hex-label">TRANSMISSION DATA</div>
-        <div id="hexData" class="hex-data">Loading...</div>
-        <div class="hex-glow"></div>
-      </div>
-
-      <form id="puzzleForm" class="puzzle-form">
-        <div class="input-group">
-          <input id="answer" type="text" autocomplete="off" placeholder="" required />
-          <label for="answer">DECODED MESSAGE</label>
-          <span class="input-border"></span>
+    <section class="puzzle-layout">
+      <div class="puzzle-main panel">
+        <div class="phase-row">
+          <span class="phase-badge">Phase 2</span>
+          <span class="identity-chip" id="identityChip">identity pending</span>
         </div>
 
-        <div id="feedback" class="feedback"></div>
+        <div class="puzzle-copy">
+          <p class="eyebrow">Archive Console</p>
+          <h1 class="title">Hex Decoder</h1>
+          <p class="subtitle">
+            Decode the transmission, recover the archive phrase, and send it back exactly as text.
+          </p>
+        </div>
 
-        <button type="submit" class="submit-btn">
-          <span class="btn-text">TRANSMIT</span>
-        </button>
-      </form>
+        <div class="hex-display-box">
+          <div class="hex-label">Transmission data</div>
+          <div id="hexData" class="hex-data">Loading...</div>
+          <div class="hex-glow"></div>
+        </div>
 
-      <div class="hint-system">
-        <button id="hintBtn" class="hint-btn">💡 REQUEST HINT</button>
-        <div id="hintDisplay" class="hint-display"></div>
+        <form id="puzzleForm" class="puzzle-form">
+          <div class="input-group">
+            <input id="answer" type="text" autocomplete="off" placeholder=" " required />
+            <label for="answer">Decoded message</label>
+            <span class="input-border"></span>
+          </div>
+
+          <div id="feedback" class="feedback"></div>
+
+          <button type="submit" class="submit-btn">
+            <span class="btn-text">Transmit</span>
+          </button>
+        </form>
+
+        <div class="attempt-counter">
+          Attempts: <span id="attemptCount">0</span>
+        </div>
       </div>
 
-      <div class="attempt-counter">
-        <span id="attemptCount">0</span> attempts
-      </div>
+      <aside class="puzzle-sidebar">
+        <div class="instruction-card panel">
+          <p class="eyebrow">Transmission Notes</p>
+          <h2 class="panel-title">Decode path</h2>
+          <p class="card-text">
+            Each hex pair becomes one ASCII character. Recover the full phrase before transmitting it back.
+          </p>
+          <p class="card-example"><code>41 42 43</code> to <code>ABC</code></p>
+        </div>
 
-      <a href="/pages/leaderboard.html" class="skip-link">Skip to Leaderboard →</a>
-    </div>
+        <div class="hint-system panel">
+          <p class="eyebrow">Hint Queue</p>
+          <button id="hintBtn" class="hint-btn" type="button">Request hint</button>
+          <div id="hintDisplay" class="hint-display">No hint requested yet.</div>
+        </div>
+
+        <a href="/pages/unlocked.html" class="nav-link">Return to hub</a>
+      </aside>
+    </section>
   </main>
 
   <script src="/js/auth.js"></script>
