@@ -1,4 +1,8 @@
-require('dotenv').config();
+try {
+  require('dotenv').config();
+} catch {
+  // Optional on platforms like Vercel where env vars are injected.
+}
 const express = require('express');
 const crypto = require('crypto');
 const fs = require('fs').promises;
@@ -401,9 +405,14 @@ app.get('/api/leaderboard3', (req, res) => {
 });
 
 // Initialize and start
+// Vercel expects the module to export the handler; local dev uses listen.
 loadUsers().then(() => {
-  app.listen(PORT, () => {
-    console.log(`🔒 LOCKED server running on http://localhost:${PORT}`);
-    console.log('   Puzzle: Your password is your username reversed');
-  });
+  if (require.main === module) {
+    app.listen(PORT, () => {
+      console.log(`🔒 LOCKED server running on http://localhost:${PORT}`);
+      console.log('   Puzzle: Your password is your username reversed');
+    });
+  }
 });
+
+module.exports = app;
