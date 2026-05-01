@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const fs = require('fs').promises;
 const session = require('express-session');
 const { v4: uuidv4 } = require('uuid');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -86,6 +87,11 @@ app.use(session({
 app.use('/css', express.static('public/css'));
 app.use('/js', express.static('public/js'));
 app.use('/pages', express.static('public/pages'));
+
+// Serve the public index at / for serverless environments
+app.get('/index.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // Redirect root to login
 app.get('/', (req, res) => {
